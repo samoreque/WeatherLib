@@ -1,0 +1,4 @@
+<resources>
+    <string name="lib_name">WeatherLib</string>
+    <string name="lib_name_internal">WeatherLibInternal</string>
+</resources>
