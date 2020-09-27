@@ -3,10 +3,10 @@ package com.samoreque.weather.repository
 import java.lang.Exception
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.nhaarman.mockitokotlin2.any
+import com.samoreque.weather.exceptions.WeatherConditionException
 import com.samoreque.weather.utils.MainCoroutineScopeRule
 import com.samoreque.weather.utils.WeatherDataUtils
-import com.samoreque.weather.WeatherException
-import com.samoreque.weather.models.Location
+import com.samoreque.weather.models.WeatherLocation
 import com.samoreque.weather.models.WeatherData
 import com.samoreque.weather.models.WeatherUnits
 import com.samoreque.weather.network.NetworkRepository
@@ -49,7 +49,7 @@ class WeatherRepositoryTest {
     fun `Should return the weather data when fetchWeatherConditions is called`() = runBlockingTest {
         //Arrange
         val weatherRequest = WeatherDataUtils.getWeatherRequest()
-        val location = Location(0.0, 0.0)
+        val location = WeatherLocation(0.0, 0.0)
         `when`(weatherApi.getWeather(any(), any(), any(), any())).thenReturn(weatherRequest)
         //Act
         val weatherData = networkRepository.fetchWeatherConditions(location, WeatherUnits.IMPERIAL)
@@ -61,7 +61,7 @@ class WeatherRepositoryTest {
     fun `Should throw a WeatherConditionException when fetchWeatherConditions is called with error`() =
         runBlockingTest {
             //Arrange
-            val location = Location(0.0, 0.0)
+            val location = WeatherLocation(0.0, 0.0)
             val exception = Exception("Error")
             var exceptionActual: Throwable? = null
             `when`(weatherApi.getWeather(any(), any(), any(), any())).thenAnswer {
@@ -75,7 +75,7 @@ class WeatherRepositoryTest {
             }
 
             //Assert
-            assertThat(exceptionActual is WeatherException.WeatherConditionException).isEqualTo(true)
+            assertThat(exceptionActual is WeatherConditionException).isEqualTo(true)
 
         }
 }

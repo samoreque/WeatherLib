@@ -1,7 +1,7 @@
 package com.samoreque.weather.network
 
-import com.samoreque.weather.WeatherException
-import com.samoreque.weather.models.Location
+import com.samoreque.weather.exceptions.WeatherConditionException
+import com.samoreque.weather.models.WeatherLocation
 import com.samoreque.weather.models.WeatherData
 import com.samoreque.weather.models.WeatherUnits
 import com.samoreque.weather.network.api.WeatherApi
@@ -20,7 +20,7 @@ internal class NetworkRepository(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : WeatherRepository {
 
-    override suspend fun fetchWeatherConditions(location: Location, weatherUnits: WeatherUnits)
+    override suspend fun fetchWeatherConditions(location: WeatherLocation, weatherUnits: WeatherUnits)
             : WeatherData {
         return withContext(dispatcher) {
             try {
@@ -29,7 +29,9 @@ internal class NetworkRepository(
                         WeatherService.API_KEY)
                 WeatherData.from(weatherRequest)
             } catch (e: Throwable) {
-                throw WeatherException.WeatherConditionException(e)
+                throw WeatherConditionException(
+                    e
+                )
             }
         }
     }
