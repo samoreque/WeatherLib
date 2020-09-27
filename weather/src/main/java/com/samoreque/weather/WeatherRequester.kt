@@ -7,21 +7,35 @@ import com.samoreque.weather.models.WeatherData
 import com.samoreque.weather.models.WeatherUnits
 import com.samoreque.weather.network.scopes.NetworkScope
 import com.samoreque.weather.network.scopes.ViewModelScope
+import com.samoreque.weather.providers.OpenWeatherMapProvider
 import com.samoreque.weather.providers.WeatherProvider
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.Result
 
-class WeatherRequest private constructor(
+class WeatherRequester private constructor(
     private var provider: WeatherProvider,
     private var units: WeatherUnits,
     private var networkScope: NetworkScope? = null
 ) {
 
-    fun fetchWeather(latitude: Double, longitude: Double,
-                     callback: ValueCallback<Result<WeatherData>>) = request(callback) {
+    /**
+     * Gets the current weather information and returns it through the [ValueCallback] callback
+     */
+    fun fetchWeather(
+        latitude: Double, longitude: Double,
+        callback: ValueCallback<Result<WeatherData>>
+    ) = request(callback) {
         provider.repository.fetchWeatherConditions(Location(latitude, longitude), units)
     }
+
+    /**
+     * Gets the current weather information.
+     *
+     * This is a suspend function so it will run under an [CoroutineScope]
+     */
+    suspend fun fetchWeather(latitude: Double, longitude: Double) =
+        provider.repository.fetchWeatherConditions(Location(latitude, longitude), units)
 
     private fun <T> request(callback: ValueCallback<Result<T>>, block: suspend () -> T) {
         networkScope?.scope?.let {
@@ -41,7 +55,7 @@ class WeatherRequest private constructor(
      *
      * WARNING: Please call [dispose] when the [ViewModel] is cleared by [ViewModel.onCleared]
      */
-    fun attach(viewModel: ViewModel) = apply{
+    fun attach(viewModel: ViewModel) = apply {
         networkScope = ViewModelScope(viewModel)
     }
 
@@ -49,16 +63,16 @@ class WeatherRequest private constructor(
         networkScope?.dispose()
     }
 
-    class Builder  {
+    class Builder {
 
-        private var provider: WeatherProvider = WeatherProvider.OpenWeatherMapProvider
+        private var provider: WeatherProvider = OpenWeatherMapProvider
         private var units: WeatherUnits = WeatherUnits.IMPERIAL
 
         fun provider(provider: WeatherProvider) = apply { this.provider = provider }
         fun weatherUnits(units: WeatherUnits) = apply { this.units = units }
 
-        fun build(): WeatherRequest {
-            return WeatherRequest(provider, units)
+        fun build(): WeatherRequester {
+            return WeatherRequester(provider, units)
         }
     }
 }

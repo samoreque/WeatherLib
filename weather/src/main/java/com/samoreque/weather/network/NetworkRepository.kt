@@ -1,6 +1,5 @@
 package com.samoreque.weather.network
 
-
 import com.samoreque.weather.WeatherException
 import com.samoreque.weather.models.Location
 import com.samoreque.weather.models.WeatherData
@@ -30,7 +29,7 @@ internal class NetworkRepository(
                         WeatherService.API_KEY)
                 WeatherData.from(weatherRequest)
             } catch (e: Throwable) {
-                throw WeatherException.WeatherCondition(e)
+                throw WeatherException.WeatherConditionException(e)
             }
         }
     }

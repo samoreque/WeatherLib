@@ -7,6 +7,6 @@ import com.samoreque.weather.models.WeatherUnits
 /**
  * Defines the operations allowed to perform operations on Weather provider.
  */
-internal interface WeatherRepository {
+interface WeatherRepository {
     suspend fun fetchWeatherConditions(location: Location, weatherUnits: WeatherUnits): WeatherData
 }
