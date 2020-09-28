@@ -30,6 +30,12 @@ android {
         jvmTarget = "1.8"
     }
 }
+repositories {
+    mavenCentral()
+    maven{
+        url "https://samoreque.mycloudrepo.io/public/repositories/weather"
+    }
+}
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
@@ -38,10 +44,11 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     implementation 'androidx.activity:activity-ktx:1.1.0'
+    implementation 'com.samoreque.weather:weather:1.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-    implementation project(":weather")
+   // implementation project(":weather")
 
 }
