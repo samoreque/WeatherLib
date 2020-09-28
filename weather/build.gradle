@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'digital.wup.android-maven-publish'
 
 android {
     compileSdkVersion 29
@@ -9,8 +10,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        versionCode rootProject.versionCode
+        versionName rootProject.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -31,6 +32,33 @@ android {
 
         unitTests.includeAndroidResources = true
     }
+    publishing {
+        publications {
+            mavenAar(MavenPublication) {
+                from components.android
+                groupId = 'com.samoreque.weather'
+                artifactId = 'weather'
+                version = rootProject.versionName
+            }
+        }
+        repositories {
+            Properties propertiesLocal = new Properties()
+            propertiesLocal.load(project.rootProject.file('local.properties').newDataInputStream())
+
+            maven {
+                url "https://samoreque.mycloudrepo.io/repositories/weather"
+                credentials {
+                    username propertiesLocal.get("maven.user")
+                    password propertiesLocal.get("maven.password")
+                }
+            }
+        }
+
+    }
+}
+
+repositories {
+    mavenCentral()
 }
 
 dependencies {
@@ -64,7 +92,6 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:3.3.1'
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0'
     testImplementation 'org.assertj:assertj-core:3.11.1'
-    testImplementation "org.robolectric:robolectric:4.3.1"
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
