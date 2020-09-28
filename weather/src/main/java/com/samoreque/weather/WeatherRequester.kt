@@ -79,7 +79,6 @@ class WeatherRequester internal constructor(
                     val data = block()
                     callback.onReceiveValue(Result.success(data))
                 } catch (throwable: Throwable) {
-                    Log.e(TAG, throwable.cause.toString(), throwable)
                     callback.onReceiveValue(Result.failure(throwable))
                 }
             }

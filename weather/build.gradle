@@ -28,7 +28,7 @@ android {
         }
     }
     testOptions {
-        //unitTests.returnDefaultValues = true
+        unitTests.returnDefaultValues = true
 
         unitTests.includeAndroidResources = true
     }
