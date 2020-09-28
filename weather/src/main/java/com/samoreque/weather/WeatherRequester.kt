@@ -1,11 +1,12 @@
 package com.samoreque.weather
 
 import android.content.Context
+import android.util.Log
 import android.webkit.ValueCallback
-import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import com.samoreque.weather.location.WeatherLocationManager
 import com.samoreque.weather.location.WeatherLocationManagerImpl
+import com.samoreque.weather.models.DailyTemperature
 import com.samoreque.weather.models.WeatherLocation
 import com.samoreque.weather.models.WeatherData
 import com.samoreque.weather.models.WeatherUnits
@@ -15,6 +16,7 @@ import com.samoreque.weather.providers.OpenWeatherMapProvider
 import com.samoreque.weather.providers.WeatherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.util.*
 import kotlin.Result
 
 class WeatherRequester internal constructor(
@@ -25,19 +27,19 @@ class WeatherRequester internal constructor(
 ) {
 
     /**
-     * Gets the current weather information for the [latitude] and [longitude] and returns it through the [ValueCallback] callback
+     * Gets the current weather information based on the [latitude] and [longitude] and returns it through the [ValueCallback] callback
      */
     fun fetchWeather(
         latitude: Double, longitude: Double,
-        callback: ValueCallback<Result<WeatherData>>) = request(callback) {
+        callback: ValueCallback<Result<WeatherData>>
+    ) = request(callback) {
         provider.repository.fetchWeatherConditions(WeatherLocation(latitude, longitude), units)
     }
 
     /**
-     * Fetch current weather based on the user location
+     * Fetch current weather information based on the user location and returns it through the [ValueCallback] callback
      */
-    fun fetchWeather(
-        callback: ValueCallback<Result<WeatherData>>) {
+    fun fetchWeather(callback: ValueCallback<Result<WeatherData>>) {
         try {
             fetchWeatherFromUserLocation(callback)
         } catch (throwable: Throwable) {
@@ -46,9 +48,11 @@ class WeatherRequester internal constructor(
     }
 
     private fun fetchWeatherFromUserLocation(callback: ValueCallback<Result<WeatherData>>) {
-        val valueCallback = ValueCallback<WeatherLocation> { request(callback) {
-            provider.repository.fetchWeatherConditions(it, units)
-        } }
+        val valueCallback = ValueCallback<WeatherLocation> {
+            request(callback) {
+                provider.repository.fetchWeatherConditions(it, units)
+            }
+        }
         locationManager.getLocation(valueCallback)
     }
 
@@ -60,6 +64,14 @@ class WeatherRequester internal constructor(
     suspend fun fetchWeather(latitude: Double, longitude: Double) =
         provider.repository.fetchWeatherConditions(WeatherLocation(latitude, longitude), units)
 
+
+    fun fetchTemperature(
+        latitude: Double, longitude: Double, date: Date,
+        callback: ValueCallback<Result<DailyTemperature>>
+    ) = request(callback) {
+        provider.repository.fetchTemperature(date, WeatherLocation(latitude, longitude), units)
+    }
+
     private fun <T> request(callback: ValueCallback<Result<T>>, block: suspend () -> T) {
         networkScope?.scope?.let {
             it.launch {
@@ -67,6 +79,7 @@ class WeatherRequester internal constructor(
                     val data = block()
                     callback.onReceiveValue(Result.success(data))
                 } catch (throwable: Throwable) {
+                    Log.e(TAG, throwable.cause.toString(), throwable)
                     callback.onReceiveValue(Result.failure(throwable))
                 }
             }
@@ -86,9 +99,15 @@ class WeatherRequester internal constructor(
         networkScope?.dispose()
     }
 
+    companion object {
+        private val TAG = WeatherRequester::class.java.name
+        private const val API_KEY = "defaultKey"
+    }
+
     class Builder {
 
-        private var provider: WeatherProvider = OpenWeatherMapProvider
+        private var provider: WeatherProvider = OpenWeatherMapProvider(
+            API_KEY)
         private var units: WeatherUnits = WeatherUnits.IMPERIAL
 
         fun provider(provider: WeatherProvider) = apply { this.provider = provider }

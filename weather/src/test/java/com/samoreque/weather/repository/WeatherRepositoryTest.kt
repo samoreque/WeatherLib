@@ -9,7 +9,7 @@ import com.samoreque.weather.utils.WeatherDataUtils
 import com.samoreque.weather.models.WeatherLocation
 import com.samoreque.weather.models.WeatherData
 import com.samoreque.weather.models.WeatherUnits
-import com.samoreque.weather.network.NetworkRepository
+import com.samoreque.weather.network.OpenWeatherRepository
 import com.samoreque.weather.network.api.WeatherApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -35,13 +35,13 @@ class WeatherRepositoryTest {
     private lateinit var weatherApi: WeatherApi
 
 
-    private lateinit var networkRepository: NetworkRepository
+    private lateinit var networkRepository: OpenWeatherRepository
 
     @Before
     fun setUp() {
 
         MockitoAnnotations.initMocks(this)
-        networkRepository = NetworkRepository(weatherApi, Dispatchers.Main)
+        networkRepository = OpenWeatherRepository(weatherApi, Dispatchers.Main)
 
     }
 

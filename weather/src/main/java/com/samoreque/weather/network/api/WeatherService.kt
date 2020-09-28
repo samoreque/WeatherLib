@@ -10,7 +10,6 @@ internal class WeatherService {
     companion object {
         private const val BASE_URL = "https://api.openweathermap.org/data/2.5/"
         private const val SERVICE_TAG = "API"
-        const val API_KEY = "bb731234b71d83138a84037d38749820"
 
         @JvmStatic
         fun create(): WeatherApi {
