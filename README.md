@@ -20,6 +20,7 @@ repositories {
 ```
 #### How to use
 The library is following the current android recommendation regarding MVVM architecture, thus it is designed to work under ViewModel classes.
+
 Creating the a `weatherRequester`:
 ```kotlin
 val weatherRequester: WeatherRequester
@@ -29,6 +30,7 @@ val weatherRequester: WeatherRequester
     .build(applicationContext)
 ```
 The api key should be got from [openweathermap](https://openweathermap.org/api) site
+
 Attaching the requester to to a view model:
 ```kotlin
 init {
@@ -72,7 +74,7 @@ date, ValueCallback {
 
 #### License
 ```
-Copyright 2012-2014 Francesco Azzola (Surviving with Android)
+Copyright 2020 Samuel Reque
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -88,5 +90,7 @@ limitations under the License.
 
 #### Developer contact
 Samuel Reque - Sr. Android developer
+
 email: samo.reque@gmail.com
+
 linkedIn: https://www.linkedin.com/in/samuel-reque-zambrana/
