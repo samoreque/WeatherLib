@@ -1,6 +1,7 @@
 Weather
 =======
  Android weather lib to get relevant information from Openweathermap  provider.
+![Sample](https://github.com/samoreque/WeatherLib/blob/master/weather_app.jpeg)
 #### Installation
 
 ```gradle
