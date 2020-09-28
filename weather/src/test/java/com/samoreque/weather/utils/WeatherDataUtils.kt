@@ -13,6 +13,6 @@ internal object WeatherDataUtils {
         getWind()
     )
 
-    private fun getMain() = MainTemperature(98.0, 99.5)
+    private fun getMain() = MainTemperature(1L,98.0, 99.5)
     private fun getWind() = Wind(speed = 120.0)
 }

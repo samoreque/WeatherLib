@@ -41,7 +41,7 @@ class WeatherRepositoryTest {
     fun setUp() {
 
         MockitoAnnotations.initMocks(this)
-        networkRepository = OpenWeatherRepository(weatherApi, Dispatchers.Main)
+        networkRepository = OpenWeatherRepository(weatherApi, Dispatchers.Main, "apiKey")
 
     }
 
